@@ -1,0 +1,53 @@
+services:
+  chat_app:
+    build: ./chat_app
+    container_name: chat_app
+    environment:
+      - DATABASE_URL=postgresql://anya:Qq123456@db:5432/basic_db
+    depends_on:
+      - db
+    networks:
+      - app_network
+
+  website_app:
+    build: ./website_app
+    container_name: website_app
+    environment:
+      - DATABASE_URL=postgresql://anya:Qq123456@db:5432/basic_db
+    depends_on:
+      - db
+    networks:
+      - app_network
+
+  nginx:
+    build: ./nginx
+    container_name: nginx
+    ports:
+      - "8000:80"
+    depends_on:
+      - chat_app
+      - website_app
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./logs:/var/log/nginx
+    networks:
+      - app_network
+
+
+  db:
+    image: postgres:13
+    container_name: postgres_db
+    environment:
+      POSTGRES_USER: anya
+      POSTGRES_PASSWORD: Qq123456
+      POSTGRES_DB: basic_db
+    volumes:
+      - ./db:/var/lib/postgresql/data
+    restart: always
+    networks:
+      - app_network
+
+networks:
+  app_network:
+    driver: bridge
+

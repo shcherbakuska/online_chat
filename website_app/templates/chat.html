@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Чат</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 600px;
+            margin-top: 50px;
+        }
+        .messages {
+            height: 300px;
+            overflow-y: scroll;
+            margin-bottom: 20px;
+            background: #fff;
+            padding: 10px;
+            border-radius: 10px;
+        }
+        .user-message {
+            background-color: #17A2B8;
+            color: #fff;
+            border-radius: 0.5em;
+            padding: 5px 10px;
+            margin: 5px 0;
+            float: left;
+        }
+        .other-message {
+            background-color: #007BFF;
+            color: #fff;
+            border-radius: 0.5em;
+            padding: 5px 10px;
+            margin: 5px 0;
+            float: right;
+        }
+        .input-section {
+            margin-top: 10px;
+        }
+        .logout-button {
+            display: block;
+            width: 100%;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2 class="text-center" id="chat-name">Чат</h2>
+        <div class="messages" id="messages"></div>
+        <div class="input-section">
+            <div class="input-group mb-3" id="message-input">
+                <input type="text" id="message" class="form-control" placeholder="Введите сообщение">
+                <div class="input-group-append">
+                    <button id="send" class="btn btn-primary">Отправить</button>
+                </div>
+            </div>
+            <button id="logout" class="btn btn-secondary logout-button">Выйти</button>
+        </div>
+    </div>
+    <script>
+        const roomName = window.location.pathname.split("/chat/")[1];
+        async function fetchChatData() {
+            try {
+                const response = await fetch(`/api/chat_data/${roomName}`);
+                const data = await response.json();
+
+                if (data.error) {
+                    alert("Ошибка: " + data.error);
+                    return;
+                }
+
+                document.getElementById("chat-name").textContent = `Название чата: ${data.room_name}`;
+                const socket = new WebSocket(`ws://localhost:8000/ws/${data.room_name}?token=${data.token}`);
+
+                socket.onmessage = function (event) {
+                    const messageDiv = document.getElementById("messages");
+                    const newMessage = document.createElement("div");
+                    newMessage.textContent = event.data;
+                    messageDiv.appendChild(newMessage);
+                    messageDiv.scrollTop = messageDiv.scrollHeight;
+                };
+
+                document.getElementById("send").addEventListener("click", function () {
+                    const input = document.getElementById("message");
+                    if (input.value) {
+                        socket.send(input.value);
+                        input.value = "";
+                    }
+                });
+
+                document.getElementById("logout").addEventListener("click", () => {
+                    window.location.href = "/user";
+                });
+
+            } catch (error) {
+                console.error("Ошибка загрузки данных:", error);
+                alert("Не удалось загрузить данные чата.");
+            }
+        }
+
+        fetchChatData();
+    </script>
+</body>
+</html>

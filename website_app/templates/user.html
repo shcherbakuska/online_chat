@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Пользовательская страница</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h2 class="text-center mt-5">Добро пожаловать, {{ username }}!</h2>
+
+        <form method="post" action="/user/rooms">
+            <div class="form-group">
+                <label for="room_name">Создай новый чат для общения со своими друзьями!</label>
+                <input type="text" class="form-control" id="room_name" name="room_name" placeholder="Название чата" required>
+            </div>
+            <button type="submit" class="btn btn-success btn-block">Создать чат</button>
+        </form>
+
+        <h3 class="mt-4">Список созданных чатов</h3>
+        <ul class="list-group">
+            {% for room in rooms %}
+            <li class="list-group-item">
+                <a href="/chat/{{ room.name }}">{{ room.name }}</a>
+                <form onsubmit="deleteRoom(event, '{{ room.name }}')" style="display:inline;">
+                    <button type="submit" class="btn btn-danger btn-sm float-right">Удалить</button>
+                </form>
+            </li>
+            {% endfor %}
+        </ul>
+
+        <a href="/user/search" class="btn btn-primary btn-block">Найти чат</a>
+        <a href="/logout" class="btn btn-secondary btn-block mt-3">Выход</a>
+    </div>
+    <script>
+        async function deleteRoom(event, roomName) {
+            event.preventDefault();
+            const response = await fetch(`/user/rooms/delete/${roomName}`, {
+                method: 'DELETE'
+                
+            });
+            if (response.redirected) {
+                window.location.href = response.url;
+            } else {
+                alert('Ошибка при удалении комнаты');
+            }
+        }
+    </script>
+</body>
+</html>

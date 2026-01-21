@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Поиск чата</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h2 class="text-center mt-5">Найдите чат по названию</h2>
+        <form method="get" action="/user/search/results">
+            <div class="form-group">
+                <input type="text" class="form-control" name="query" placeholder="Введите название чата (минимум 6 символов)..." required>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Искать</button>
+        </form>
+        <a href="/user" class="btn btn-secondary btn-block">Назад к своей странице</a>
+        <h3 class="mt-4">Доступные чаты</h3>
+        <ul class="list-group">
+            {% for room in rooms %}
+            <li class="list-group-item">
+                <a href="/chat/{{ room.name }}">{{ room.name }}</a>
+            </li>
+            {% endfor %}
+        </ul>        
+    </div>
+</body>
+</html>

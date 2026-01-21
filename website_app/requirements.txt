@@ -1,0 +1,9 @@
+fastapi[standard]
+uvicorn
+sqlalchemy
+passlib[bcrypt]
+psycopg2-binary
+jinja2
+starlette 
+PyJWT
+itsdangerous
