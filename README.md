@@ -79,6 +79,3 @@ API для микросервиса chat:
 |nginx/	                         | Конфигурация веб-сервера Nginx                                                           |
 |nginx/nginx.conf	             | Основной конфигурационный файл Nginx                                                     |
 |nginx/Dockerfile	             | Docker-файл для сборки образа Nginx                                                      |
-
-
-Автор: Щерба Анна Андреевна
